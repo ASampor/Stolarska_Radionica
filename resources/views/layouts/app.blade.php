@@ -1,22 +1,26 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="sr">
 <head>
-  <meta charset="utf-8">
-  <title>@yield('title', 'Stolarska')</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/modern-normalize/modern-normalize.css">
-  <style>body{font-family:Arial,Helvetica,sans-serif;padding:20px;} .nav{margin-bottom:20px;} .nav a{margin-right:10px;}</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@yield('title', 'Wood Design Cicka')</title>
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    @yield('head') {{-- This allows individual pages to add their own CSS or scripts --}}
+
 </head>
 <body>
-  <div class="nav">
-    <a href="{{ url('/') }}">Home</a>
-    <a href="{{ route('zahtevi.index') }}">Zahtevi</a>
-    <a href="{{ route('termini.index') }}">Termini</a>
-    <a href="{{ route('narudzbine.index') }}">Narudžbine</a>
-    <a href="{{ route('klijenti.index') }}">Klijenti</a>
-  </div>
+    <header>
+        <h1>Wood Design Cicka</h1>
+        <nav>
+            <a href="{{ route('pocetna') }}">Početna</a>
+            <a href="{{ route('register') }}">Registracija</a>
+            <a href="{{ route('login') }}">Prijava</a>
+            
+        </nav>
+    </header>
 
-  @if(session('success')) <div style="color:green">{{ session('success') }}</div> @endif
-
-  @yield('content')
+    <main>
+        @yield('content')
+    </main>
 </body>
 </html>

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('Prezime', 25);
             $table->string('Email', 45)->unique();
             $table->string('Lozinka', 255);
+            $table->string('Telefon', 10);
         });        
     }
 
