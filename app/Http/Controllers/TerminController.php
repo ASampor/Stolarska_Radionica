@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Termin;
+use App\Models\Zahtev;
+use App\Models\Stolar;
 use Illuminate\Http\Request;
 
 class TerminController extends Controller
@@ -12,7 +14,8 @@ class TerminController extends Controller
      */
     public function index()
     {
-        //
+        $termini = Termin::with('zahtev','stolar')->latest()->paginate(10);
+        return view('termini.index', compact('termini'));
     }
 
     /**
@@ -20,7 +23,10 @@ class TerminController extends Controller
      */
     public function create()
     {
-        //
+        // Prikaži zahteve koji još nemaju termin
+        $zahtevi = Zahtev::doesntHave('termin')->get();
+        $stolari = Stolar::all();
+        return view('termini.create', compact('zahtevi','stolari'));
     }
 
     /**
@@ -28,7 +34,14 @@ class TerminController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->validate([
+            'Datum_vreme' => 'required|date',
+            'Zahtev_id' => 'required|exists:Zahtev,ID_Zahtev',
+            'Stolar_id' => 'required|exists:Stolar,ID_Stolar',
+        ]);
+
+        Termin::create($data);
+        return redirect()->route('termini.index')->with('success','Termin zakazan.');
     }
 
     /**
@@ -36,7 +49,7 @@ class TerminController extends Controller
      */
     public function show(Termin $termin)
     {
-        //
+        return view('termini.show', compact('termin'));
     }
 
     /**
@@ -60,6 +73,7 @@ class TerminController extends Controller
      */
     public function destroy(Termin $termin)
     {
-        //
+        $termin->delete();
+        return redirect()->route('termini.index')->with('success','Termin obrisan.');
     }
 }

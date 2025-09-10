@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Klijent;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class KlijentController extends Controller
 {
@@ -12,7 +13,8 @@ class KlijentController extends Controller
      */
     public function index()
     {
-        //
+        $klijenti = Klijent::latest()->paginate(10);
+        return view('klijenti.index', compact('klijenti'));
     }
 
     /**
@@ -20,7 +22,7 @@ class KlijentController extends Controller
      */
     public function create()
     {
-        //
+        return view('klijenti.create');
     }
 
     /**
@@ -28,7 +30,15 @@ class KlijentController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->validate([
+            'Ime'=>'required|string|max:15',
+            'Prezime'=>'required|string|max:20',
+            'Email'=>'required|email|unique:Klijent,Email',
+            'Lozinka'=>'required|string|min:6',
+        ]);
+        $data['Lozinka'] = Hash::make($data['Lozinka']);
+        Klijent::create($data);
+        return redirect()->route('klijenti.index')->with('success','Klijent dodat.');
     }
 
     /**
@@ -36,7 +46,7 @@ class KlijentController extends Controller
      */
     public function show(Klijent $klijent)
     {
-        //
+        return view('klijenti.show', compact('klijent'));
     }
 
     /**
@@ -44,7 +54,7 @@ class KlijentController extends Controller
      */
     public function edit(Klijent $klijent)
     {
-        //
+        return view('klijenti.edit', compact('klijent'));
     }
 
     /**
@@ -52,7 +62,14 @@ class KlijentController extends Controller
      */
     public function update(Request $request, Klijent $klijent)
     {
-        //
+        $data = $request->validate([
+            'Ime'=>'required|string|max:15',
+            'Prezime'=>'required|string|max:20',
+            'Email'=>'required|email|unique:Klijent,Email,'.$klijent->ID_Klijent.',ID_Klijent',
+        ]);
+        if($request->filled('Lozinka')) $data['Lozinka']= Hash::make($request->Lozinka);
+        $klijent->update($data);
+        return redirect()->route('klijenti.show',$klijent)->with('success','Klijent ažuriran.');
     }
 
     /**
@@ -60,6 +77,7 @@ class KlijentController extends Controller
      */
     public function destroy(Klijent $klijent)
     {
-        //
+        $klijent->delete();
+        return redirect()->route('klijenti.index')->with('success','Klijent obrisan.');
     }
 }
